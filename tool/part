@@ -1,0 +1,50 @@
+#!/bin/sh
+
+#
+# Umount all
+#
+if [ $(mount | grep -c ${DISK}1) -eq 1 ]; then
+    sudo umount ${DISK}1
+    echo "umount ${DISK}1"
+fi
+
+if [ $(mount | grep -c ${DISK}2) -eq 1 ]; then
+    sudo umount ${DISK}2
+    echo "umount ${DISK}2"
+fi
+
+#
+# Clear the partition table
+#
+sudo dd if=/dev/zero of=${1} bs=1M count=16
+
+#
+# Create new partition table
+#
+sudo sfdisk --in-order --Linux --unit M ${1} << EOF
+1,48,0xE,*
+,,,-
+EOF
+
+#
+# Format
+#
+sudo mkfs.vfat -F 16 ${1}1 -n boot
+sudo mkfs.ext4 ${1}2 -L rootfs
+
+sync
+
+if [ $(mount | grep -c ${DISK}1) -eq 1 ]; then
+    sudo umount ${DISK}1
+    echo "umount ${DISK}1"
+fi
+
+if [ $(mount | grep -c ${DISK}2) -eq 1 ]; then
+    sudo umount ${DISK}2
+    echo "umount ${DISK}2"
+fi
+
+sudo fsck -y ${1}1
+sudo fsck -y ${1}2
+
+exit 0

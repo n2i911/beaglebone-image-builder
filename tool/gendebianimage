@@ -1,0 +1,67 @@
+#!/bin/sh
+
+#
+# Generate a 2048 MB image
+#
+
+#
+# 3072 MB
+#
+sudo dd if=/dev/zero of=beaglebone-black-debian.img bs=1024k seek=3072 count=0
+
+#
+# Partition to 32 MB and rest...
+#
+sudo losetup /dev/loop0 beaglebone-black-debian.img
+
+sudo sfdisk --in-order --Linux --unit M /dev/loop0 << EOF
+1,32,0xE,*
+,,,-
+EOF
+
+mkdir -p boot
+mkdir -p rootfs
+
+#
+# 512x2048 = 1048576
+# format partition as fat16
+#
+sudo losetup -o 1048576 /dev/loop1 /dev/loop0
+sudo mkfs.vfat -F 16 /dev/loop1 -n boot
+sudo mount /dev/loop1 boot
+
+#
+# Copy u-boot.bin and uEnv.txt
+#
+sudo cp u-boot.bin ./boot/u-boot.img
+sudo cp uEnv.txt ./boot/uEnv.txt
+
+#
+# 512x67584 = 34603008
+# format partition as ext4
+#
+sudo losetup -o 34603008 /dev/loop2 /dev/loop0
+sudo mkfs.ext4 /dev/loop2 -L rootfs
+sudo mount /dev/loop2 rootfs
+
+#
+# Copy the root filesystem, include kernel and dtbs
+#
+sudo tar xzf ${1} -C ./rootfs/
+sudo mkdir -p ./rootfs/boot/dtbs
+sudo cp 4.1.6-ti-r11.zImage ./rootfs/boot/zImage
+sudo tar xzf 4.1.6-ti-r11-dtbs.tar.gz -C ./rootfs/boot/dtbs/
+sudo tar xzf 4.1.6-ti-r11-modules.tar.gz -C ./rootfs/
+sudo tar xzf 4.1.6-ti-r11-firmware.tar.gz -C ./rootfs/lib/firmware/
+
+#
+# MLO
+#
+sudo dd if=MLO of=/dev/loop0 count=1 seek=1 conv=notrunc bs=128K
+
+sudo umount boot
+sudo umount rootfs
+
+sudo losetup -d /dev/loop2 /dev/loop1 /dev/loop0
+
+rm -rf ./boot/ ./rootfs/

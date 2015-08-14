@@ -1,0 +1,37 @@
+#!/bin/sh
+
+# This would generate initrd.img and initramfs.img from a romfs image
+
+mkdir -p m0 m1
+
+sudo mount -o loop romfs.img m1
+
+#
+# initramfs.img
+#
+cd m1
+find . | cpio -H newc -o > ../initramfs.cpio
+cd ..
+cat initramfs.cpio | gzip > initramfs.img
+
+#
+# initrd.img
+#
+dd if=/dev/zero of=ramdisk bs=1k count=8192
+sudo mkfs.ext2 -v -F -m0 ramdisk
+sudo mount -o loop ramdisk m0
+
+sudo cp -ra m1/* m0
+
+sync
+
+cd m0
+sudo tar czf ${1} *
+cd ..
+
+sudo umount m0
+sudo umount m1
+
+gzip -9 -c ramdisk > initrd.img
+
+rm -rf m0/ m1/ ramdisk
