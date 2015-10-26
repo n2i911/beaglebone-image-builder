@@ -1,7 +1,7 @@
 # source directory
 src_dir := $(root_dir)/src
 uboot_dir := $(src_dir)/$(uboot_version)
-kernel_dir := $(src_dir)/linux-$(kernel_version)
+kernel_dir := $(src_dir)/$(kernel_version)
 busybox_dir := $(src_dir)/$(busybox_version)
 firmware_dir := $(src_dir)/$(firmware_version)
 mt7601u_dir := $(src_dir)/mt7601u
@@ -15,6 +15,14 @@ target_out_uboot := $(target_out)/$(uboot_version)
 target_out_busybox := $(target_out)/$(busybox_version)
 target_out_chroot := $(target_out)/chroot
 target_out_rootfs := $(target_out)/rootfs
+target_out_kernel_firmware := $(target_out_bin)/firmware
+target_out_kernel_dtbs := $(target_out_bin)/dtbs
+target_out_kernel_modules := $(target_out_bin)/modules
+
+# config directory
+config_dir := $(root_dir)/config
+
+kernel_config := $(config_dir)/kernel/bb.org_defconfig
 
 qemu_filepath :=
 

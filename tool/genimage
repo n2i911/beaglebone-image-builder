@@ -49,8 +49,8 @@ sudo mount /dev/loop2 rootfs
 #
 sudo tar xzf ${1} -C ./rootfs/
 sudo mkdir -p ./rootfs/boot/dtbs
-sudo cp 4.1.6-ti-r11.zImage ./rootfs/boot/zImage
-sudo tar xzf 4.1.6-ti-r11-dtbs.tar.gz -C ./rootfs/boot/dtbs/
+sudo cp ${2}.zImage ./rootfs/boot/zImage
+sudo tar xzf ${2}-dtbs.tar.gz -C ./rootfs/boot/dtbs/
 
 #
 # MLO
