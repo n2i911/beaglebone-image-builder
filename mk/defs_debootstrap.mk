@@ -25,7 +25,7 @@ DEB_INCLUDE := "apache2,avahi-daemon,bsdmainutils,btrfs-tools,ca-certificates,cp
 DEB_EXCLUDE :=
 DEB_COMPONENT := "main contrib non-free"
 DEB_DIR := $(target_out_chroot)
-DEB_MIRROR := http://ftp.tw.debian.org/debian/
+DEB_MIRROR := http://ftp.debian.org/debian/
 
 DEB_OPTION := --arch=$(DEB_ARCH) --include=$(DEB_INCLUDE) \
 	--foreign $(DEB_CODENAME) $(DEB_DIR) $(DEB_MIRROR)
