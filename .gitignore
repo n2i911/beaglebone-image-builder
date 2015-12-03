@@ -34,3 +34,4 @@
 stamp-*
 out/
 src/
+debian-rootfs-config

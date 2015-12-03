@@ -24,8 +24,6 @@ config_dir := $(root_dir)/config
 
 kernel_config := $(config_dir)/kernel/bb.org_defconfig
 
-qemu_filepath :=
-
 # target file
 target_kernel := zImage
 target_uboot := u-boot.bin

@@ -1,7 +1,7 @@
 build-rootfs: scratch-rootfs debian-rootfs
 
 scratch-rootfs: $(busybox_version) $(target_scratch_rootfs)
-debian-rootfs: $(target_debian_rootfs)
+debian-rootfs: debian-rootfs-config
 
 $(busybox_version):
 	mkdir -p $(target_out_bin)
@@ -21,23 +21,25 @@ $(target_scratch_rootfs): $(target_out_rootfs) $(target_out_busybox)/.config
 		-d $(target_out_rootfs) 1> romfs.map 2>&1
 	cd $(target_out_bin) && env PATH=$(root_dir)/tool:$(PATH) geninitrd $(target_scratch_rootfs)
 
+debian-rootfs-config: $(target_debian_rootfs)
+	-sudo mount proc $(DEB_DIR)/proc -t proc
+	-sudo mount sysfs $(DEB_DIR)/sys -t sysfs
+	sudo cp $(sources_list_file) $(DEB_DIR)/etc/apt/sources.list
+	sudo cp $(hostname_file) $(DEB_DIR)/etc/hostname
+	sudo cp $(hosts_file) $(DEB_DIR)/etc/hosts
+	sudo cp $(interfaces_file) $(DEB_DIR)/etc/network/interfaces
+	sudo mkdir -p $(DEB_DIR)/boot/uboot
+	-sudo chroot $(DEB_DIR) /bin/bash -c "adduser debian"
+	-sudo chroot $(DEB_DIR) /bin/bash -c "usermod -a -G sudo debian"
+	sudo rm $(DEB_DIR)/etc/resolv.conf
+	-sudo umount $(DEB_DIR)/proc
+	-sudo umount $(DEB_DIR)/sys
+	cd $(DEB_DIR) && sudo tar czf $(target_debian_rootfs) *
+
 $(target_debian_rootfs):
 	mkdir -p $(DEB_DIR)
 	sudo debootstrap $(DEB_OPTION)
 	sudo cp $(qemu_filepath) $(DEB_DIR)/usr/bin/
 	sudo cp /etc/resolv.conf $(DEB_DIR)/etc/
 	sudo chroot $(DEB_DIR) /debootstrap/debootstrap --second-stage
-	sudo mount proc $(DEB_DIR)/proc -t proc
-	sudo mount sysfs $(DEB_DIR)/sys -t sysfs
-	sudo cp $(sources_list_file) $(DEB_DIR)/etc/apt/sources.list
-	sudo cp $(hostname_file) $(DEB_DIR)/etc/hostname
-	sudo cp $(hosts_file) $(DEB_DIR)/etc/hosts
-	sudo cp $(interfaces_file) $(DEB_DIR)/etc/network/interfaces
-	sudo mkdir -p $(DEB_DIR)/boot/uboot
-	sudo chroot $(DEB_DIR) /bin/bash -c "adduser debian"
-	sudo chroot $(DEB_DIR) /bin/bash -c "usermod -a -G sudo debian"
-	sudo rm $(DEB_DIR)/etc/resolv.conf
-	sudo rm $(DEB_DIR)/usr/bin/qemu-arm-static
-	sudo umount $(DEB_DIR)/proc
-	sudo umount $(DEB_DIR)/sys
-	cd $(DEB_DIR) && sudo tar czf $(target_debian_rootfs) *
+	touch debian-rootfs-config
