@@ -28,6 +28,9 @@ debian-rootfs-config: $(target_debian_rootfs)
 	sudo cp $(hostname_file) $(DEB_DIR)/etc/hostname
 	sudo cp $(hosts_file) $(DEB_DIR)/etc/hosts
 	sudo cp $(interfaces_file) $(DEB_DIR)/etc/network/interfaces
+	sudo cp $(motd_file) $(DEB_DIR)/etc/motd
+	sudo cp $(issue_file) $(DEB_DIR)/etc/issue
+	sudo cp $(issuenet_file) $(DEB_DIR)/etc/issue.net
 	sudo mkdir -p $(DEB_DIR)/boot/uboot
 	-sudo chroot $(DEB_DIR) /bin/bash -c "adduser debian"
 	-sudo chroot $(DEB_DIR) /bin/bash -c "usermod -a -G sudo debian"
