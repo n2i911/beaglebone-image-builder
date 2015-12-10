@@ -13,8 +13,7 @@ include mk/download.mk
 
 .PHONY: all
 
-all: stamp-kernel stamp-uboot stamp-rootfs
-
+all: stamp-image
 
 # kernel
 include mk/kernel.mk
@@ -62,7 +61,7 @@ distclean: clean
 
 # image
 include mk/image.mk
-stamp-image: all
+stamp-image: stamp-kernel stamp-uboot stamp-rootfs
 	make build-image
 	touch $@
 
