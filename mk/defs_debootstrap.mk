@@ -20,7 +20,8 @@ DEB_INCLUDE := "apache2,avahi-daemon,bsdmainutils,btrfs-tools,ca-certificates,cp
 	u-boot-tools,udhcpd,usb-modeswitch,usbutils,wireless-tools,wpasupplicant,wvdial,openssh-client,\
 	i3-wm,i3status,terminator,suckless-tools,python3,screen,vim,ranger,lightdm,fakeroot build-essential,gpm,\
 	openbox,xserver-common,xserver-xorg,xserver-xorg-core,xserver-xorg-video-modesetting,x11-xserver-utils,\
-	xserver-xorg-video-fbdev,xserver-xorg-input-evdev,xserver-xorg-input-all"
+	xserver-xorg-video-fbdev,xserver-xorg-input-evdev,xserver-xorg-input-all,libbluetooth-dev,gdb,cgdb,\
+	module-init-tools,strace,xterm,dkms"
 
 DEB_EXCLUDE :=
 DEB_COMPONENT := "main contrib non-free"
