@@ -48,6 +48,9 @@ stamp-rootfs:
 	make build-rootfs
 	touch $@
 
+clean-rootfs:
+	sudo rm -rf $(target_debian_rootfs) $(target_scratch_rootfs)
+
 distclean-rootfs:
 	sudo rm -rf $(target_out_busybox) $(target_out_rootfs) $(target_out_chroot) $(target_debian_rootfs) stamp-rootfs
 
