@@ -49,6 +49,7 @@ stamp-rootfs:
 
 clean-rootfs:
 	sudo rm -rf $(target_debian_rootfs) $(target_scratch_rootfs)
+	rm -rf stamp-rootfs
 
 distclean-rootfs:
 	sudo rm -rf $(target_out_busybox) $(target_out_rootfs) $(target_out_chroot) $(target_debian_rootfs) stamp-rootfs
